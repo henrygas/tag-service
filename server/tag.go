@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"tag-service/pkg/bapi"
+	"tag-service/pkg/errcode"
 	pb "tag-service/proto"
 )
 
