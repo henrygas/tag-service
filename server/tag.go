@@ -9,24 +9,24 @@ import (
 )
 
 type TagServer struct {
-
+	BlogURL string
 }
 
-func NewTagServer() *TagServer {
-	return &TagServer{}
+func NewTagServer(blogURL string) *TagServer {
+	return &TagServer{BlogURL: blogURL}
 }
 
 func (t *TagServer) GetTagList(c context.Context, r *pb.GetTagListRequest) (*pb.GetTagListReply, error) {
-	api := bapi.NewAPI("http://127.0.0.1:8000")
+	api := bapi.NewAPI(t.BlogURL)
 	body, err := api.GetTagList(c, r.GetName())
 	if err != nil {
-		return nil, errcode.TogRPCError(errcode.ERROR_GET_TAG_LIST_FAIL)
+		return nil, errcode.TogRPCError(errcode.ErrorGetTagListFail)
 	}
 
 	tagList := pb.GetTagListReply{}
 	err = json.Unmarshal(body, &tagList)
 	if err != nil {
-		return nil, errcode.TogRPCError(errcode.FAIL)
+		return nil, errcode.TogRPCError(errcode.Fail)
 	}
 
 	return &tagList, nil

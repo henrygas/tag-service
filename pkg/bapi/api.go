@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	APP_KEY = "henry"
-	APP_SECRET = "blog-service"
+	APP_KEY = "henry-key"
+	APP_SECRET = "henry-secret"
 )
 
 type AccessToken struct {
