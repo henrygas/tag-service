@@ -3,6 +3,7 @@ module tag-service
 go 1.14
 
 require (
+	github.com/elazarl/go-bindata-assetfs v1.0.1
 	github.com/golang/protobuf v1.4.3
 	github.com/grpc-ecosystem/grpc-gateway v1.14.4
 	github.com/soheilhy/cmux v0.1.4

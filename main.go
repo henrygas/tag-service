@@ -4,6 +4,9 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	assetfs "github.com/elazarl/go-bindata-assetfs"
+	"path"
+	"tag-service/pkg/swagger"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/soheilhy/cmux"
 	"golang.org/x/net/http2"
@@ -139,6 +142,28 @@ func RunHttpServer(port string) error {
 	serveMux.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte(`pong`))
 	})
+
+	prefix := "/swagger-ui/"
+	fileServer := http.FileServer(&assetfs.AssetFS{
+		Asset:     swagger.Asset,
+		AssetDir:  swagger.AssetDir,
+		AssetInfo: nil,
+		Prefix:    "third_party/swagger",
+		Fallback:  "",
+	})
+	serveMux.Handle(prefix, http.StripPrefix(prefix, fileServer))
+	serveMux.HandleFunc("/swagger/", func(w http.ResponseWriter, r *http.Request) {
+		if !strings.HasSuffix(r.URL.Path, "swagger.json") {
+			http.NotFound(w, r)
+			return
+		}
+
+		p := strings.TrimPrefix(r.URL.Path, "/swagger/")
+		p = path.Join("proto", p)
+
+		http.ServeFile(w, r, p)
+	})
+
 	return http.ListenAndServe(":" + port, serveMux)
 }
 

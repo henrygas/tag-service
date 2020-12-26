@@ -82,8 +82,13 @@ cp -rf swagger-ui/dist/* third_party/swagger/
 sudo go get -u github.com/go-bindata/go-bindata/...
 
 # 在项目根目录下进行资源转换
-go-bindata --nocompress -pkg swagger -o pkg/swagger-ui/data.go third_party/swagger/...
+go-bindata --nocompress -pkg swagger -o pkg/swagger/data.go third_party/swagger/...
 
 # 安装go-bindata-assetfs库：结合net/http标准库和go-bindata生成swagger UI的GO代码供外部访问
 sudo go get -u github.com/elazarl/go-bindata-assetfs/...
+
+# 生成swagger.json
+protoc -I/usr/local/include -I. -I${GOPATH}/src \
+ -I${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
+ --swagger_out=logtostderr=true:. ./proto/*.proto
 ```
