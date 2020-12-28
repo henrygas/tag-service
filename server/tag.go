@@ -17,6 +17,7 @@ func NewTagServer(blogURL string) *TagServer {
 }
 
 func (t *TagServer) GetTagList(c context.Context, r *pb.GetTagListRequest) (*pb.GetTagListReply, error) {
+	panic("测试抛出异常!")
 	api := bapi.NewAPI(t.BlogURL)
 	body, err := api.GetTagList(c, r.GetName())
 	if err != nil {

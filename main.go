@@ -5,7 +5,9 @@ import (
 	"flag"
 	"fmt"
 	assetfs "github.com/elazarl/go-bindata-assetfs"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"path"
+	"tag-service/internal/middleware"
 	"tag-service/pkg/swagger"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/soheilhy/cmux"
@@ -108,7 +110,13 @@ func RunSeperately() {
 
 	go func() {
 		opts := []grpc.ServerOption{
-			grpc.UnaryInterceptor(helloInterceptor),
+			grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+				helloInterceptor,
+				worldInterceptor,
+				middleware.AccessLog,
+				middleware.ErrorLog,
+				middleware.Recovery,
+			)),
 		}
 		s := grpc.NewServer(opts...)
 		pb.RegisterTagServiceServer(s, server.NewTagServer(GetBlogURL()))
@@ -202,5 +210,13 @@ func helloInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServ
 	log.Println("你好")
 	resp, err := handler(ctx, req)
 	log.Println("再见")
+	return resp, err
+}
+
+func worldInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo,
+	handler grpc.UnaryHandler) (interface{}, error) {
+	log.Println("世界我来了")
+	resp, err := handler(ctx, req)
+	log.Println("世界再见")
 	return resp, err
 }
