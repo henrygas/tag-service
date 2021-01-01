@@ -6,6 +6,7 @@ import (
 	"tag-service/pkg/bapi"
 	"tag-service/pkg/errcode"
 	pb "tag-service/proto"
+	"time"
 )
 
 type TagServer struct {
@@ -17,7 +18,8 @@ func NewTagServer(blogURL string) *TagServer {
 }
 
 func (t *TagServer) GetTagList(c context.Context, r *pb.GetTagListRequest) (*pb.GetTagListReply, error) {
-	panic("测试抛出异常!")
+	//panic("测试抛出异常!")
+	time.Sleep(15 * time.Second)
 	api := bapi.NewAPI(t.BlogURL)
 	body, err := api.GetTagList(c, r.GetName())
 	if err != nil {

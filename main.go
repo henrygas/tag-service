@@ -68,7 +68,6 @@ func main() {
 	default:
 		log.Fatalf("unknown way:%d to run!", way)
 	}
-
 }
 
 func RunSeperately() {
