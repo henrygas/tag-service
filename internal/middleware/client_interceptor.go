@@ -9,7 +9,7 @@ import (
 func defaultContextTimeout(ctx context.Context) (context.Context, context.CancelFunc) {
 	var cancel context.CancelFunc
 	if _, ok := ctx.Deadline(); !ok {
-		defaultTimeout := 10 * time.Second
+		defaultTimeout := 2 * time.Second
 		ctx, cancel = context.WithTimeout(ctx, defaultTimeout)
 	}
 	return ctx, cancel

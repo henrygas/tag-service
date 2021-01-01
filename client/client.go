@@ -49,15 +49,15 @@ func GetClientConn(ctx context.Context, target string, opts []grpc.DialOption) (
 	opts = append(opts, grpc.WithInsecure())
 	opts = append(opts, grpc.WithUnaryInterceptor(
 		grpc_middleware.ChainUnaryClient(
-			middleware.UnaryContextTimeout(),
 			grpc_retry.UnaryClientInterceptor(
-				grpc_retry.WithMax(2),
+				grpc_retry.WithMax(5),
 				grpc_retry.WithCodes(
 					codes.Unknown,
 					codes.Internal,
 					codes.DeadlineExceeded,
 				),
 			),
+			middleware.UnaryContextTimeout(),
 		),
 	))
 	opts = append(opts, grpc.WithStreamInterceptor(
