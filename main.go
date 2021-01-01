@@ -53,7 +53,7 @@ func init() {
 	flag.StringVar(&blogPort, "blog-port", "8001", "博客服务端口号")
 	flag.StringVar(&port, "port", "8082", "多协议共用端口号")
 	flag.StringVar(&multiPort, "multi_port", "8083", "多协议共用端口号和同方法")
-	flag.IntVar(&way, "way", WayGrpcHttpOnSameRpc, "多协议运行方式")
+	flag.IntVar(&way, "way", WayGrpcHttpSeparately, "多协议运行方式")
 	flag.Parse()
 }
 

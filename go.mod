@@ -5,7 +5,7 @@ go 1.14
 require (
 	github.com/elazarl/go-bindata-assetfs v1.0.1
 	github.com/golang/protobuf v1.4.3
-	github.com/grpc-ecosystem/go-grpc-middleware v1.1.0 // indirect
+	github.com/grpc-ecosystem/go-grpc-middleware v1.1.0
 	github.com/grpc-ecosystem/grpc-gateway v1.14.4
 	github.com/soheilhy/cmux v0.1.4
 	golang.org/x/net v0.0.0-20201224014010-6772e930b67b

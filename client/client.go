@@ -5,12 +5,8 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
 	"log"
-	"tag-service/internal/middleware"
 	pb "tag-service/proto"
 )
 
@@ -23,9 +19,31 @@ func init() {
 	flag.Parse()
 }
 
+type Auth struct {
+	AppKey string
+	AppSecret string
+}
+
+func (a *Auth) GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error) {
+	return map[string]string{
+		"app_key": a.AppKey,
+		"app_secret": a.AppSecret,
+	}, nil
+}
+
+func (a *Auth) RequireTransportSecurity() bool {
+	return false
+}
+
 func main() {
+	auth := Auth{
+		AppKey:    "henry-key",
+		AppSecret: "henry-secret",
+	}
+
 	ctx := context.Background()
-	clientConn, err := GetClientConn(ctx, GetTargetURL(), nil)
+	var opts = []grpc.DialOption{grpc.WithPerRPCCredentials(&auth)}
+	clientConn, err := GetClientConn(ctx, GetTargetURL(), opts)
 	if err != nil {
 		log.Fatalf("err: %v", err)
 	}
@@ -47,24 +65,24 @@ func main() {
 
 func GetClientConn(ctx context.Context, target string, opts []grpc.DialOption) (*grpc.ClientConn, error) {
 	opts = append(opts, grpc.WithInsecure())
-	opts = append(opts, grpc.WithUnaryInterceptor(
-		grpc_middleware.ChainUnaryClient(
-			grpc_retry.UnaryClientInterceptor(
-				grpc_retry.WithMax(5),
-				grpc_retry.WithCodes(
-					codes.Unknown,
-					codes.Internal,
-					codes.DeadlineExceeded,
-				),
-			),
-			middleware.UnaryContextTimeout(),
-		),
-	))
-	opts = append(opts, grpc.WithStreamInterceptor(
-		grpc_middleware.ChainStreamClient(
-			middleware.StreamContextTimeout(),
-		),
-	))
+	//opts = append(opts, grpc.WithUnaryInterceptor(
+	//	grpc_middleware.ChainUnaryClient(
+	//		grpc_retry.UnaryClientInterceptor(
+	//			grpc_retry.WithMax(5),
+	//			grpc_retry.WithCodes(
+	//				codes.Unknown,
+	//				codes.Internal,
+	//				codes.DeadlineExceeded,
+	//			),
+	//		),
+	//		middleware.UnaryContextTimeout(),
+	//	),
+	//))
+	//opts = append(opts, grpc.WithStreamInterceptor(
+	//	grpc_middleware.ChainStreamClient(
+	//		middleware.StreamContextTimeout(),
+	//	),
+	//))
 	return grpc.DialContext(ctx, target, opts...)
 }
 
